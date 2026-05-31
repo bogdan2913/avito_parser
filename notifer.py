@@ -1,7 +1,7 @@
 import requests
 from config import TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
 
-_PROXIES = {"https": "socks5://127.0.0.1:1080", "http": "socks5://127.0.0.1:1080"}
+_PROXIES = {"https": "socks5h://127.0.0.1:1080", "http": "socks5h://127.0.0.1:1080"}
 
 
 def notify(message):
