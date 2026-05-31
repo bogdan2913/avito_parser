@@ -1,0 +1,24 @@
+# Секреты
+.env
+
+# Окружение
+venv/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Данные и логи
+*.json
+*.log
+logs/
+
+# Мусор
+мусорка/
+requirements.txt
+*.ipynb
+.DS_Store
+.idea/
+.vscode/
+*.swp
