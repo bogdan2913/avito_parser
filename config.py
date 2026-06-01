@@ -16,6 +16,8 @@ PROXY_USERNAME   = os.getenv("PROXY_USERNAME", "")
 PROXY_PASSWORD   = os.getenv("PROXY_PASSWORD", "")
 PROXY_ROTATE_URL = os.getenv("PROXY_ROTATE_URL", "")
 
+## гав гав гав
+
 
 # Города для парсинга и ссылки на каталог Авито
 CITY_CATALOG_URLS = {
