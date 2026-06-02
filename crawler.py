@@ -6,7 +6,6 @@ from fetcher import fetch_html, collect_links, parse_listing
 from logger import logger
 
 
-
 def collect_all_links(proxy_url, base_url):
     seen      = set()
     all_links = []
@@ -16,9 +15,15 @@ def collect_all_links(proxy_url, base_url):
         url  = base_url if page_num == 1 else f"{base_url}{sep}p={page_num}"
         logger.info(f"Каталог стр. {page_num}: {url}")
 
-        html = fetch_html(url, proxy_url)
+        html = None
+        for attempt in range(1, 4):
+            html = fetch_html(url, proxy_url)
+            if html:
+                break
+            logger.warning(f"Каталог стр. {page_num}: попытка {attempt}/3 не удалась, ждём...")
+            time.sleep(10 * attempt)
         if not html:
-            logger.error(f"Стр. {page_num}: не удалось загрузить")
+            logger.error(f"Стр. {page_num}: не удалось загрузить после 3 попыток")
             break
 
         links = collect_links(html)
@@ -26,8 +31,6 @@ def collect_all_links(proxy_url, base_url):
             logger.info(f"Стр. {page_num}: объявлений нет, выходим")
             break
 
-        # Фильтруем: оставляем только ссылки, принадлежащие запрошенному городу.
-        # Если Авито не нашёл объявлений и подставил другой город — отбрасываем весь результат.
         city_slug = base_url.split("avito.ru/")[1].split("/")[0]
         links = [l for l in links if f"/{city_slug}/" in l]
         if not links:
@@ -41,6 +44,7 @@ def collect_all_links(proxy_url, base_url):
         time.sleep(random.uniform(1.0, 2.5))
 
     return all_links
+
 
 
 def parse_with_retry(proxy_url, url, attempts=3):
