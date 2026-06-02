@@ -3,6 +3,7 @@ import time
 
 from config import MAX_PAGES_PER_SESSION
 from fetcher import fetch_html, collect_links, parse_listing
+from proxy import rotate_ip
 from logger import logger
 
 
@@ -23,7 +24,12 @@ def collect_all_links(proxy_url, base_url):
             logger.warning(f"Каталог стр. {page_num}: попытка {attempt}/3 не удалась, ждём...")
             time.sleep(10 * attempt)
         if not html:
-            logger.error(f"Стр. {page_num}: не удалось загрузить после 3 попыток")
+            logger.error(f"Стр. {page_num}: не удалось загрузить после 3 попыток — ротация IP")
+            rotate_ip()
+            time.sleep(60)
+            html = fetch_html(url, proxy_url)
+        if not html:
+            logger.error(f"Стр. {page_num}: не удалось загрузить даже после ротации")
             break
 
         links = collect_links(html)
