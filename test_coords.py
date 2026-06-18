@@ -10,13 +10,13 @@ URL = "https://www.avito.ru/saratov/kvartiry/1-k._kvartira_43_m_1125_et._8056868
 
 proxy_url = get_proxy_url()
 print(f"Fetching: {URL}")
-html = fetch_html(URL, proxy_url)
+html, final_url = fetch_html(URL, proxy_url)
 
 if not html:
     print("Не удалось получить HTML")
     exit(1)
 
-result = parse_listing(html, URL)
+result = parse_listing(html, final_url)
 
 print(f"\nlat: {result.get('lat')}")
 print(f"lng: {result.get('lng')}")

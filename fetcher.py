@@ -21,6 +21,8 @@ _block_attempts = 0  # счётчик блокировок подряд, сбр�
 
 
 def fetch_html(url, proxy_url=None):
+    # Возвращает (html, final_url) — final_url учитывает редиректы Авито
+    # (например смену слага города), html=None при неудаче.
     global _block_attempts
     try:
         # Новая сессия на каждый запрос — уникальный fingerprint при каждом обращении
@@ -29,6 +31,8 @@ def fetch_html(url, proxy_url=None):
         if proxy_url:
             kwargs["proxy"] = proxy_url
         r = session.get(url, **kwargs)
+        # После редиректов curl_cffi хранит итоговый адрес в r.url
+        final_url = str(getattr(r, "url", None) or url)
         if r.status_code == 200:
             # Авито отдаёт капчу/заглушку с кодом 200, а не 403 — проверяем текст
             if "Доступ ограничен" in r.text:
@@ -41,9 +45,9 @@ def fetch_html(url, proxy_url=None):
                     time.sleep(60)
                 else:
                     time.sleep(random.uniform(10, 20))
-                return None
+                return None, None
             _block_attempts = 0
-            return r.text
+            return r.text, final_url
         if r.status_code in (403, 429):
             _block_attempts += 1
             logger.warning(f"HTTP {r.status_code} (подряд: {_block_attempts}): {url}")
@@ -56,10 +60,10 @@ def fetch_html(url, proxy_url=None):
                 time.sleep(random.uniform(10, 20))
         else:
             logger.warning(f"HTTP {r.status_code}: {url}")
-        return None
+        return None, None
     except Exception as e:
         logger.error(f"fetch_html {url}: {e}")
-        return None
+        return None, None
 
 
 def _extract_page_json(html):

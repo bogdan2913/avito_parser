@@ -16,9 +16,10 @@ def collect_all_links(proxy_url, base_url):
         url  = base_url if page_num == 1 else f"{base_url}{sep}p={page_num}"
         logger.info(f"Каталог стр. {page_num}: {url}")
 
-        html = None
+        html      = None
+        final_url = url
         for attempt in range(1, 4):
-            html = fetch_html(url, proxy_url)
+            html, final_url = fetch_html(url, proxy_url)
             if html:
                 break
             logger.warning(f"Каталог стр. {page_num}: попытка {attempt}/3 не удалась, ждём...")
@@ -27,17 +28,24 @@ def collect_all_links(proxy_url, base_url):
             logger.error(f"Стр. {page_num}: не удалось загрузить после 3 попыток — ротация IP")
             rotate_ip()
             time.sleep(60)
-            html = fetch_html(url, proxy_url)
+            html, final_url = fetch_html(url, proxy_url)
         if not html:
             logger.error(f"Стр. {page_num}: не удалось загрузить даже после ротации")
             break
+
+        # Авито часто отвечает 302 (канонизация слага города/региона). curl_cffi
+        # уже прошёл по редиректу — парсим страницу, на которую попали по факту.
+        if final_url.split("?")[0] != url.split("?")[0]:
+            logger.info(f"Стр. {page_num}: редирект {url} -> {final_url}")
 
         links = collect_links(html)
         if not links:
             logger.info(f"Стр. {page_num}: объявлений нет, выходим")
             break
 
-        city_slug = base_url.split("avito.ru/")[1].split("/")[0]
+        # Слаг берём из финального URL: после редиректа объявления приходят с
+        # каноническим слагом, и фильтр по исходному слагу вырезал бы их все.
+        city_slug = final_url.split("avito.ru/")[1].split("/")[0]
         links = [l for l in links if f"/{city_slug}/" in l]
         if not links:
             logger.info(f"Стр. {page_num}: объявления не из {city_slug!r}, пропускаем город")
@@ -56,9 +64,10 @@ def collect_all_links(proxy_url, base_url):
 def parse_with_retry(proxy_url, url, attempts=3):
     for attempt in range(1, attempts + 1):
         try:
-            html = fetch_html(url, proxy_url)
+            html, final_url = fetch_html(url, proxy_url)
             if html:
-                data = parse_listing(html, url)
+                # Парсим страницу, на которую реально попали после редиректа
+                data = parse_listing(html, final_url)
                 if data is not None:
                     return data
         except Exception:
