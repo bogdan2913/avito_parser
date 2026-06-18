@@ -85,18 +85,38 @@ def split_by_price(city, url, breakpoints=None):
 
 
 
-# По ценовым сегментам 
-for k, v in split_by_price(
-    "Химки",
-    "https://www.avito.ru/himki/kvartiry/prodam/vtorichka-ASgBAgICAkSSA8YQ5geMUg"
-).items():
-    print(f'    "{k}": "{v}",')
-
-
-
-## По комнатам 
-# for k, v in split_by_rooms(
-#     "Москва",
-#     "https://www.avito.ru/moskva/kvartiry/prodam/vtorichka-ASgBAgICAkSSA8YQ5geMUg?localPriority=0"
+# # По ценовым сегментам 
+# for k, v in split_by_price(
+#     "Химки",
+#     "https://www.avito.ru/himki/kvartiry/prodam/vtorichka-ASgBAgICAkSSA8YQ5geMUg"
 # ).items():
 #     print(f'    "{k}": "{v}",')
+
+
+CITIES = [
+    ("Санкт-Петербург и ЛО", "https://www.avito.ru/sankt-peterburg_i_lo/kvartiry/prodam/vtorichka-ASgBAgICAkSSA8YQ5geMUg?localPriority=0"),
+    ("Новосибирск",          "https://www.avito.ru/novosibirsk/kvartiry/prodam/vtorichka-ASgBAgICAkSSA8YQ5geMUg?localPriority=0"),
+    ("Екатеринбург",         "https://www.avito.ru/ekaterinburg/kvartiry/prodam/vtorichka-ASgBAgICAkSSA8YQ5geMUg?localPriority=0"),
+    ("Казань",               "https://www.avito.ru/kazan/kvartiry/prodam/vtorichka-ASgBAgICAkSSA8YQ5geMUg?localPriority=0"),
+    ("Нижний Новгород",      "https://www.avito.ru/nizhniy-novgorod/kvartiry/prodam/vtorichka-ASgBAgICAkSSA8YQ5geMUg?localPriority=0"),
+    ("Красноярск",           "https://www.avito.ru/krasnoyarsk/kvartiry/prodam/vtorichka-ASgBAgICAkSSA8YQ5geMUg?localPriority=0"),
+    ("Самара",               "https://www.avito.ru/samara/kvartiry/prodam/vtorichka-ASgBAgICAkSSA8YQ5geMUg?localPriority=0"),
+    ("Ростов-на-Дону",       "https://www.avito.ru/rostov-na-donu/kvartiry/prodam/vtorichka-ASgBAgICAkSSA8YQ5geMUg?localPriority=0"),
+    ("Краснодар",            "https://www.avito.ru/krasnodar/kvartiry/prodam/vtorichka-ASgBAgICAkSSA8YQ5geMUg?localPriority=0"),
+    ("Омск",                 "https://www.avito.ru/omsk/kvartiry/prodam/vtorichka-ASgBAgICAkSSA8YQ5geMUg?localPriority=0"),
+    ("Пермь",                "https://www.avito.ru/perm/kvartiry/prodam/vtorichka-ASgBAgICAkSSA8YQ5geMUg?localPriority=0"),
+    ("Тюмень",               "https://www.avito.ru/tyumen/kvartiry/prodam/vtorichka-ASgBAgICAkSSA8YQ5geMUg?localPriority=0"),
+    ("Тольятти",             "https://www.avito.ru/tolyatti/kvartiry/prodam/vtorichka-ASgBAgICAkSSA8YQ5geMUg?localPriority=0"),
+    ("Ижевск",               "https://www.avito.ru/izhevsk/kvartiry/prodam/vtorichka-ASgBAgICAkSSA8YQ5geMUg?localPriority=0"),
+    ("Барнаул",              "https://www.avito.ru/barnaul/kvartiry/prodam/vtorichka-ASgBAgICAkSSA8YQ5geMUg?localPriority=0"),
+    ("Ульяновск",            "https://www.avito.ru/ulyanovsk/kvartiry/prodam/vtorichka-ASgBAgICAkSSA8YQ5geMUg?localPriority=0"),
+    ("Хабаровск",            "https://www.avito.ru/habarovsk/kvartiry/prodam/vtorichka-ASgBAgICAkSSA8YQ5geMUg?localPriority=0"),
+    ("Владивосток",          "https://www.avito.ru/vladivostok/kvartiry/prodam/vtorichka-ASgBAgICAkSSA8YQ5geMUg?localPriority=0"),
+    ("Махачкала",            "https://www.avito.ru/mahachkala/kvartiry/prodam/vtorichka-ASgBAgICAkSSA8YQ5geMUg?localPriority=0"),
+    ("Оренбург",             "https://www.avito.ru/orenburg/kvartiry/prodam/vtorichka-ASgBAgICAkSSA8YQ5geMUg?localPriority=0"),
+]
+
+for city, url in CITIES:
+    for k, v in split_by_price(city, url).items():
+        print(f'  "{k}": "{v}",')
+    
